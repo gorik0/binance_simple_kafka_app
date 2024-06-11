@@ -1,0 +1,17 @@
+port: "8000"
+
+db:
+  username: "postgres"
+  host: "db"
+  port: "5432"
+  dbname: "postgres"
+  sslmode: "disable"
+
+app:
+  name: "Coins API"
+  version: "1.0.0"
+  env: "development"
+
+kafka:
+  address: "localhost:9092"
+  topic: "coins"
