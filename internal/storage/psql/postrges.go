@@ -14,6 +14,12 @@ type Config struct {
 
 }
 
+var (
+UserTable = "users"
+AccountsTable = "accounts"
+TransferTable = "transfer"
+)
+
 
 
 func NewPostgresDB(cfg *Config)(*sqlx.DB,error){
