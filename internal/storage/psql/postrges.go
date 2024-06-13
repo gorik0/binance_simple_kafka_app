@@ -3,6 +3,7 @@ package psql
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 type Config struct {
 	Host string
@@ -17,7 +18,7 @@ type Config struct {
 var (
 UserTable = "users"
 AccountsTable = "accounts"
-TransferTable = "transfer"
+TransferTable = "transfers"
 )
 
 

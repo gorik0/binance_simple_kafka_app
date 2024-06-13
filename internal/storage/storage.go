@@ -15,7 +15,7 @@ type Account interface {
 }
 type Authorization interface {
 	CreateUser(user *core.User)(int,error)
-	GetUSer(login string,password string)(*core.User)
+	GetUSer(login string, password string) (*core.User, error)
 
 }
 type Transfer interface {

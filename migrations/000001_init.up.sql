@@ -16,7 +16,7 @@ CREATE TABLE accounts
 );
 
 CREATE TABLE transfers
-(
+    (
     id              bigserial PRIMARY KEY,
     from_account_id bigint,
     to_account_id   bigint,

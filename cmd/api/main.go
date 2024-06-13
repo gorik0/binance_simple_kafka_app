@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bina/internal/es"
-	"bina/internal/es/kafka"
-	"bina/internal/service/webapi"
 	"bina/internal/storage/psql"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"os"
 	//"github.com/spf13/viper"
 )
 
@@ -33,12 +31,12 @@ func main() {
 		}
 	}
 	// ::: POSTGRES DB setup
-	{
+
 		cfg := &psql.Config{
 			Host:     viper.GetString("db.host"),
-			Password: viper.GetString("db.password"),
+			Password: os.Getenv("DB_PASSWORD"),
 			Port:     viper.GetString("db.port"),
-			DB:       viper.GetString("db.db"),
+			DB:       viper.GetString("db.dbname"),
 			User:     viper.GetString("db.user"),
 			SSLMode:  viper.GetString("db.sslmode"),
 		}
@@ -46,34 +44,38 @@ func main() {
 		if err != nil {
 			logrus.Fatal("connecting to DB  ::: ", err)
 		}
-	}
 
-	// ::: BINANCE WEPAPI setup
-
-	{
-		binannceWEBapi := ser.NewBinanceWebApi(&ser.BinanceWebApiCFG{
-			APIKey:    "LALALL",
-			APISecret: "LALALL",
-		})
-	}
-
-	// ::: KAFKA setup
+			_=db
 
 
-	kafkaWriter:= kafka.NewKafkaWriter(&kafka.Config{
-		Addres: viper.GetString("kafka.addres"),
-		Topic:  viper.GetString("kafka.topic"),
-	})
 
-massageBroker:= es.NewKafkaMessageBroker(kafkaWriter)
-
+	//
+//	// ::: BINANCE WEPAPI setup
+//
+//	{
+//		binannceWEBapi := ser.NewBinanceWebApi(&ser.BinanceWebApiCFG{
+//			APIKey:    "LALALL",
+//			APISecret: "LALALL",
+//		})
+//	}
+//
+//	// ::: KAFKA setup
+//
+//
+//	kafkaWriter:= kafka.NewKafkaWriter(&kafka.Config{
+//		Addres: viper.GetString("kafka.addres"),
+//		Topic:  viper.GetString("kafka.topic"),
+//	})
+//
+//massageBroker:= es.NewKafkaMessageBroker(kafkaWriter)
+//
 
 
 }
 
 func initCfg() error {
 	viper.AddConfigPath("cfg")
-	viper.SetConfigFile("cfg")
-	viper.AddConfigPath("yaml")
+	viper.SetConfigName("cfg")
+	viper.SetConfigType("yaml")
 	return viper.ReadInConfig()
 }
