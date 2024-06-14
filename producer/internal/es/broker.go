@@ -3,6 +3,7 @@ package es
 import (
 	"bina/internal/core"
 	"bina/internal/es/kafka"
+	ser "bina/internal/service/webapi"
 	"context"
 )
 
@@ -29,7 +30,8 @@ type MessageBroker struct {
 
 func NewKafkaMessageBroker(writer *kafka.Writer) *MessageBroker{
 return &MessageBroker{
-
+	Account:  ser.NewAccountWriter(writer,writer.Topic),
+	Transfer: ser.NewTransferWriter(writer,writer.Topic),
 }
 }
 

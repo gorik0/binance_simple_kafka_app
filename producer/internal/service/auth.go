@@ -3,6 +3,9 @@ package service
 import (
 	"bina/internal/core"
 	"bina/internal/storage"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"crypto/sha1"
 	"errors"
 	"fmt"
@@ -21,8 +24,11 @@ type AuthService struct {
 
 var tokenTTL = time.Hour*60
 
-var signingKey = "signing_key"
+var signingKey *ecdsa.PrivateKey
 
+func init() {
+	signingKey,_=ecdsa.GenerateKey(elliptic.P256(),rand.Reader)
+}
 func (a AuthService) GenerateToken(username, password string) (string, error) {
 	user,err:= a.AuthRepo.GetUSer(username,GenerateHashPassword(password))
 	if err != nil {
@@ -36,8 +42,7 @@ func (a AuthService) GenerateToken(username, password string) (string, error) {
 		},
 		UserId:           user.Id,
 	})
-
-	return token.SignedString([]byte(signingKey))
+	return token.SignedString(signingKey)
 }
 
 func (a AuthService) CreateUser(user *core.User) (int, error) {
@@ -57,7 +62,7 @@ func GenerateHashPassword(password string) string {
 
 func (a AuthService) ParseToken(token string) (int, error) {
 	tok,err:= jwt.ParseWithClaims(token,&tokenClaims{}, func(*jwt.Token) (interface{}, error){
-		return []byte(signingKey),nil
+		return signingKey,nil
 	})
 	if err != nil {
 		return 0,nil
@@ -69,8 +74,8 @@ func (a AuthService) ParseToken(token string) (int, error) {
 	return claim.UserId,nil
 }
 
-func NewAuthService(*storage.Storage) *AuthService {
+func NewAuthService(s *storage.Storage) *AuthService {
 	return &AuthService{
-		AuthRepo:       nil,
+		AuthRepo:     s.Authorization  ,
 	}
 }
